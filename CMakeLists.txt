@@ -5,11 +5,9 @@ project(casc.c LANGUAGES C)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+include(FetchContent)
 include(GNUInstallDirs)
 include("cmake/casc.c-version.cmake")
-
-set(CAS_BUILD_TESTS OFF)
-add_subdirectory(vendor/cashash.c)
 
 set(casc.c_lib_name "casc.c")
 set(casc.c_lib_cflags "")
@@ -30,6 +28,27 @@ option(CASC_C_LIB_BUILD_OBJECT
 	OFF
 ) # BUG: can't build object library fix this.
 option(CASC_C_BUILD_EXE "Build executable" ON)
+
+# ---- Dependencies ----
+set(CAS_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(CAS_BUILD_EXAMPLE OFF CACHE BOOL "" FORCE)
+set(CAS_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(CAS_USE_XXHASH ON CACHE BOOL "" FORCE)
+
+FetchContent_Declare(
+	cashash
+	GIT_REPOSITORY
+	https://github.com/caspianrz/cashash.c.git
+	GIT_TAG
+	v0.7.0
+)
+FetchContent_MakeAvailable(cashash)
+list(APPEND casc.c_lib_libraries cashash::cashash)
+
+get_target_property(INCS cashash::cashash INTERFACE_INCLUDE_DIRECTORIES)
+message(STATUS "cashash includes = ${INCS}")
+
+# ----------------------
 
 if(CASC_C_LIB_BUILD_SHARED)
 	list(APPEND casc.c_lib_build_targets "shared")
@@ -171,7 +190,6 @@ if(CASC_C_LIB_BUILD_OBJECT)
 endif()
 
 add_library(casc.c::casc.c ALIAS ${casc.c_lib_main})
-target_link_libraries(${casc.c_lib_main} PRIVATE cashash::cashash)
 
 # --- Compiler Executable ---
 set(casc.c_exe_sources)
