@@ -6,8 +6,8 @@
 # include <stdlib.h>
 
 # define casc_calloc calloc;
-# define casc_malloc malloc;
+# define casc_malloc(size) malloc(size);
 # define casc_realloc realloc;
-# define casc_free free;
+# define casc_free(ptr) free(ptr);
 
 #endif

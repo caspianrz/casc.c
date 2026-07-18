@@ -190,6 +190,7 @@ if(CASC_C_LIB_BUILD_OBJECT)
 endif()
 
 add_library(casc.c::casc.c ALIAS ${casc.c_lib_main})
+target_link_libraries(${casc.c_lib_main} PUBLIC ${casc.c_lib_libraries})
 
 # --- Compiler Executable ---
 set(casc.c_exe_sources)
