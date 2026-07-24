@@ -13,9 +13,4 @@ int casc_c_main(int argc, char *argv[]) {
   return EXIT_FAILURE;
 }
 
-int main(int argc, char *argv[]) {
-  casc_source_manager_context_t *context = casc_init_source_manager_context();
-  casc_free_source_manager_context(context);
-
-  return casc_c_main(argc, argv);
-}
+int main(int argc, char *argv[]) { return casc_c_main(argc, argv); }

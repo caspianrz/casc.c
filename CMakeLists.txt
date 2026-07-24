@@ -46,7 +46,16 @@ FetchContent_MakeAvailable(cashash)
 list(APPEND casc.c_lib_libraries cashash::cashash)
 
 get_target_property(INCS cashash::cashash INTERFACE_INCLUDE_DIRECTORIES)
-message(STATUS "cashash includes = ${INCS}")
+
+FetchContent_Declare(
+	casvect.c
+	GIT_REPOSITORY
+	https://github.com/caspianrz/casvect.c.git
+	GIT_TAG
+	main
+)
+FetchContent_MakeAvailable(casvect.c)
+list(APPEND casc.c_lib_libraries casvect.c::static)
 
 # ----------------------
 
