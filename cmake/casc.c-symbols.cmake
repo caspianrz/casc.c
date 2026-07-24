@@ -4,6 +4,7 @@ include(CheckFunctionExists)
 
 check_include_files("stdio.h" CASC_HAVE_STDIO_H)
 check_include_files("unistd.h" CASC_HAVE_UNISTD_H)
+check_include_files("stdlib.h" CASC_HAVE_STDLIB_H)
 check_include_files("sys/stat.h" CASC_HAVE_SYS_STAT_H)
 
 check_symbol_exists(mmap "sys/mman.h" CASC_HAVE_MMAP)

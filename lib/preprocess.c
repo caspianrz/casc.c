@@ -1,4 +1,5 @@
 #include <casc.c/preprocess.h>
+#include <string.h>
 
 struct casc_preprocessor_s {
   casc_source_manager_t *source_manager;

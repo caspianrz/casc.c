@@ -5,6 +5,7 @@
 
 # cmakedefine01 CASC_HAVE_STDIO_H
 # cmakedefine01 CASC_HAVE_UNISTD_H
+# cmakedefine01 CASC_HAVE_STDLIB_H
 # cmakedefine01 CASC_HAVE_SYS_STAT_H
 
 # cmakedefine01 CASC_HAVE_MMAP

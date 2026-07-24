@@ -6,6 +6,7 @@
 typedef enum casc_error_e {
   CASC_ERROR_NONE = 0,
 
+  CASC_ERROR_NULL_REFERENCE,
   CASC_ERROR_NOT_IMPLEMENTED,
 
   /* Filesystem */

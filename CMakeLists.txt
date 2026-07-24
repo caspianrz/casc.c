@@ -55,8 +55,8 @@ FetchContent_Declare(
 	GIT_TAG
 	main
 )
-FetchContent_MakeAvailable(casvect.c)
-list(APPEND casc.c_lib_libraries casvect.c::static)
+# FetchContent_MakeAvailable(casvect.c)
+# list(APPEND casc.c_lib_libraries casvect.c::static)
 
 # ----------------------
 
@@ -138,8 +138,9 @@ if(CASC_C_LIB_BUILD_STATIC)
 	target_link_libraries(casc.c-static PRIVATE ${casc.c_lib_libraries})
 	target_include_directories(casc.c-static
 		PUBLIC
-			$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-			$<INSTALL_INTERFACE:${casc.c_install_incdir}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
 	)
 	install(
 		TARGETS casc.c-static

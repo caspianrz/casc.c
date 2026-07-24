@@ -10,7 +10,16 @@
 extern "C" {
 # endif
 
-typedef struct casc_source_manager_s casc_source_manager_t;
+typedef enum casc_source_kind_e {
+  CASC_SOURCE_KIND_FILE,
+  CASC_SOURCE_KIND_MACRO_EXPANSION,
+} casc_source_kind_t;
+
+typedef enum {
+  CASC_SOURCE_STORAGE_AUTO = 0,
+  CASC_SOURCE_STORAGE_MALLOC,
+  CASC_SOURCE_STORAGE_MMAP
+} casc_source_storage_t;
 
 typedef struct {
   casc_u32_t offset;
@@ -25,8 +34,8 @@ typedef casc_u32_t casc_file_id_t;
 
 typedef struct casc_source_file_s {
   casc_file_id_t id;
-  const char *path;
-  const char *buffer;
+  char *path;
+  char *buffer;
   casc_size_t size;
 
   casc_source_storage_t storage;
@@ -41,17 +50,6 @@ typedef struct casc_macro_expansion_s {
   casc_source_range_t expansion;
   casc_u32_t length;
 } casc_macro_expansion_t;
-
-typedef enum casc_source_kind_e {
-  CASC_SOURCE_KIND_FILE,
-  CASC_SOURCE_KIND_MACRO_EXPANSION,
-} casc_source_kind_t;
-
-typedef enum {
-  CASC_SOURCE_STORAGE_AUTO = 0,
-  CASC_SOURCE_STORAGE_MALLOC,
-  CASC_SOURCE_STORAGE_MMAP
-} casc_source_storage_t;
 
 typedef struct casc_sloc_entry_s {
   casc_source_kind_t kind;
@@ -71,100 +69,8 @@ typedef struct casc_source_manager_s {
 
 // Functions
 
-void casc_source_manager_init(casc_source_manager_t *manager);
-void casc_source_manager_destroy(casc_source_manager_t *manager);
-
-casc_file_id_t casc_source_manager_create_file(casc_source_manager_t *manager,
-                                               const char *path);
-casc_file_id_t
-casc_source_manager_create_memory_file(casc_source_manager_t *manager,
-                                       const char *name, const char *buffer,
-                                       casc_u32_t size);
-
-const casc_error_t casc_source_manager_load(casc_source_manager_t *manager,
-                                            casc_file_id_t file,
-                                            casc_source_storage_t mode);
-
-casc_file_id_t casc_source_manager_create_macro_expansion(
-    casc_source_manager_t *manager, casc_source_location_t spelling,
-    casc_source_range_t expansion, casc_u32_t length);
-
-const casc_sloc_entry_t *
-casc_source_manager_get_entry(const casc_source_manager_t *manager,
-                              casc_file_id_t id);
-
-casc_sloc_entry_t *
-casc_source_manager_get_entry_mut(casc_source_manager_t *manager,
-                                  casc_file_id_t id);
-
-const casc_source_file_t *
-casc_source_manager_get_file(const casc_source_manager_t *manager,
-                             casc_file_id_t id);
-
-casc_source_file_t *
-casc_source_manager_get_file_mut(casc_source_manager_t *manager,
-                                 casc_file_id_t id);
-
-const casc_macro_expansion_t *
-casc_source_manager_get_expansion(const casc_source_manager_t *manager,
-                                  casc_file_id_t id);
-
-casc_macro_expansion_t *
-casc_source_manager_get_expansion_mut(casc_source_manager_t *manager,
-                                      casc_file_id_t id);
-
-casc_source_location_t
-casc_source_manager_get_location(const casc_source_manager_t *manager,
-                                 casc_file_id_t file, casc_u32_t file_offset);
-
-casc_file_id_t
-casc_source_manager_get_file_id(const casc_source_manager_t *manager,
-                                casc_source_location_t loc);
-
-casc_u32_t
-casc_source_manager_get_file_offset(const casc_source_manager_t *manager,
-                                    casc_source_location_t loc);
-
-const char *casc_source_manager_get_buffer(const casc_source_manager_t *manager,
-                                           casc_file_id_t file);
-
-casc_u32_t
-casc_source_manager_get_buffer_size(const casc_source_manager_t *manager,
-                                    casc_file_id_t file);
-
-const char *
-casc_source_manager_get_filename(const casc_source_manager_t *manager,
-                                 casc_source_location_t loc);
-
-const char *casc_source_manager_get_path(const casc_source_manager_t *manager,
-                                         casc_file_id_t file);
-
-casc_u32_t casc_source_manager_get_line(const casc_source_manager_t *manager,
-                                        casc_source_location_t loc);
-
-casc_u32_t casc_source_manager_get_column(const casc_source_manager_t *manager,
-                                          casc_source_location_t loc);
-
-casc_source_location_t casc_source_manager_advance(casc_source_location_t loc,
-                                                   casc_u32_t amount);
-
-casc_source_location_t casc_source_manager_retreat(casc_source_location_t loc,
-                                                   casc_u32_t amount);
-
-bool casc_source_manager_is_macro(const casc_source_manager_t *manager,
-                                  casc_source_location_t loc);
-
-casc_source_location_t
-casc_source_manager_get_spelling_location(const casc_source_manager_t *manager,
-                                          casc_source_location_t loc);
-
-casc_source_location_t
-casc_source_manager_get_expansion_location(const casc_source_manager_t *manager,
-                                           casc_source_location_t loc);
-
-casc_source_range_t
-casc_source_manager_get_expansion_range(const casc_source_manager_t *manager,
-                                        casc_source_location_t loc);
+casc_error_t casc_source_manager_init(casc_source_manager_t *manager);
+casc_error_t casc_source_manager_destroy(casc_source_manager_t *manager);
 
 # ifdef __cplusplus
 }

@@ -51,7 +51,7 @@
 #  include <stdio.h>
 #  define casc_fopen(__filename, __mode) fopen(__filename, __mode)
 #  define casc_fread(ptr, size, nitems, stream) fread(ptr, size, nitems, stream)
-#  define casc_fclose(__file) fclose(_file)
+#  define casc_fclose(__file) fclose(__file)
 # endif
 
 # if CASC_HAVE_UNISTD_H
