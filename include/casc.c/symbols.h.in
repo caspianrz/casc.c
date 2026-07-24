@@ -1,0 +1,24 @@
+#pragma once
+
+#ifndef CASC_SYMBOLS_H
+# define CASC_SYMBOLS_H
+
+# cmakedefine01 CASC_HAVE_STDIO_H
+# cmakedefine01 CASC_HAVE_UNISTD_H
+# cmakedefine01 CASC_HAVE_SYS_STAT_H
+
+# cmakedefine01 CASC_HAVE_MMAP
+# cmakedefine01 CASC_HAVE_MUNMAP
+
+# cmakedefine01 CASC_HAVE_MALLOC
+# cmakedefine01 CASC_HAVE_CALLOC
+# cmakedefine01 CASC_HAVE_REALLOC
+# cmakedefine01 CASC_HAVE_FREE
+
+# cmakedefine01 CASC_HAVE_ACCESS
+# cmakedefine01 CASC_HAVE_STAT
+# cmakedefine01 CASC_HAVE_FSTAT
+# cmakedefine01 CASC_HAVE__STAT
+# cmakedefine01 CASC_HAVE__ACCESS
+
+#endif

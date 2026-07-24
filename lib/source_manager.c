@@ -1,4 +1,7 @@
+#include <casc.c/allocator.h>
+#include <casc.c/config.h>
 #include <casc.c/source.h>
+#include <casc.c/types.h>
 
 static casc_sloc_entry_t *
 casc_source_manager_alloc_entry(casc_source_manager_t *manager) {
@@ -90,7 +93,7 @@ casc_file_id_t casc_source_manager_create_file(casc_source_manager_t *manager,
 
   manager->next_offset += entry->file.size;
 
-  casc_file_id_t id = {.id = manager->sloc_count};
+  casc_file_id_t id = manager->sloc_count;
 
   entry->file.id = id;
 
@@ -117,7 +120,7 @@ casc_source_manager_create_memory_file(casc_source_manager_t *manager,
 
   manager->next_offset += size;
 
-  casc_file_id_t id = {.id = manager->sloc_count};
+  casc_file_id_t id = manager->sloc_count;
 
   entry->file.id = id;
 
@@ -146,7 +149,93 @@ casc_file_id_t casc_source_manager_create_macro_expansion(
 
   manager->next_offset += length;
 
-  casc_file_id_t id = {.id = manager->sloc_count};
+  casc_file_id_t id = manager->sloc_count;
 
   return id;
+}
+
+static casc_error_t casc_source_file_load_malloc(casc_source_file_t *file) {
+  if (NULL == file)
+    return CASC_ERROR_FILE_NOT_FOUND;
+
+  if (file->loaded)
+    return CASC_ERROR_NONE;
+
+  if (NULL == file->path || '\0' == file->path[0]) {
+    return CASC_ERROR_FILE_OPEN_FAILED;
+  }
+
+  struct stat st;
+  if (0 != casc_stat(file->path, &st)) {
+    return CASC_ERROR_FILE_NOT_FOUND;
+  }
+
+  file->size = (casc_size_t)st.st_size;
+
+  casc_file_pt file_handle = casc_fopen(file->path, O_RDONLY);
+  if (-1 == file_handle) {
+    return CASC_ERROR_FILE_OPEN_FAILED;
+  }
+
+  file->buffer = casc_malloc(file->size + 1);
+  file->storage = CASC_SOURCE_STORAGE_MALLOC;
+
+  if (NULL == file->buffer) {
+    casc_fclose(file_handle);
+    return CASC_ERROR_OUT_OF_MEMORY;
+  }
+
+  casc_size_t _n = casc_fread(file->buffer, 1, file->size, file_handle);
+  if (_n != file->size) {
+    casc_free(file->buffer);
+    file->buffer = NULL;
+    casc_fclose(file_handle);
+    return CASC_ERROR_FILE_READ_FAILED;
+  }
+  ((char *)file->buffer)[file->size] = '\0';
+  casc_fclose(file_handle);
+  file->loaded = CASC_TRUE;
+  return CASC_ERROR_NONE;
+}
+
+static casc_error_t casc_source_file_load_mmap(casc_source_file_t *file) {
+#if CASC_OS_WINDOWS
+
+#elif CASC_HAVE_MMAP
+  int file_handle = casc_fopen(file->path, O_RDONLY);
+#else
+  return CASC_ERROR_INTERNAL;
+#endif
+}
+
+casc_error_t casc_source_manager_load(casc_source_manager_t *manager,
+                                      casc_file_id_t file_id,
+                                      casc_source_storage_t mode) {
+  casc_source_file_t *file;
+
+  if (file_id >= manager->sloc_count)
+    return CASC_ERROR_INVALID_FILE_ID;
+
+  file = &manager->sloc_entries[file_id];
+
+  if (file->loaded)
+    return CASC_ERROR_NONE;
+
+  switch (mode) {
+  case CASC_SOURCE_STORAGE_MALLOC:
+    return casc_source_file_load_malloc(file);
+
+  case CASC_SOURCE_STORAGE_MMAP:
+    return casc_source_file_load_mmap(file);
+
+  case CASC_SOURCE_STORAGE_AUTO:
+#if CASC_HAS_MEMORYMAP
+    return casc_source_file_load_mmap(file);
+#else
+    return casc_source_file_load_malloc(file);
+#endif
+
+  default:
+    return CASC_ERROR_INTERNAL;
+  }
 }

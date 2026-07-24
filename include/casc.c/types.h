@@ -78,5 +78,6 @@ typedef const casc_char_t casc_cchar_t;
 typedef const casc_byte_t casc_cbyte_t;
 
 typedef FILE casc_file_t;
+typedef FILE *casc_file_pt;
 
 #endif

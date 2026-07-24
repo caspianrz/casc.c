@@ -1,0 +1,33 @@
+#pragma once
+
+#ifndef CASC_ERROR_H
+# define CASC_ERROR_H
+
+typedef enum casc_error_e {
+  CASC_ERROR_NONE = 0,
+
+  CASC_ERROR_NOT_IMPLEMENTED,
+
+  /* Filesystem */
+  CASC_ERROR_FILE_NOT_FOUND,
+  CASC_ERROR_FILE_OPEN_FAILED,
+  CASC_ERROR_FILE_READ_FAILED,
+  CASC_ERROR_FILE_WRITE_FAILED,
+  CASC_ERROR_FILE_MAP_FAILED,
+
+  /* Memory */
+  CASC_ERROR_OUT_OF_MEMORY,
+
+  /* Source Manager */
+  CASC_ERROR_INVALID_FILE_ID,
+  CASC_ERROR_SOURCE_ALREADY_LOADED,
+  CASC_ERROR_SOURCE_NOT_LOADED,
+
+  /* Lexer */
+  CASC_ERROR_INVALID_UTF8,
+
+  /* Internal */
+  CASC_ERROR_INTERNAL
+} casc_error_t;
+
+#endif

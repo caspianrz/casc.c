@@ -8,6 +8,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 include(FetchContent)
 include(GNUInstallDirs)
 include("cmake/casc.c-version.cmake")
+include("cmake/casc.c-symbols.cmake")
 
 set(casc.c_lib_name "casc.c")
 set(casc.c_lib_cflags "")
@@ -105,8 +106,9 @@ if(CASC_C_LIB_BUILD_SHARED)
 	target_link_libraries(casc.c-shared PRIVATE ${casc.c_lib_libraries})
 	target_include_directories(casc.c-shared
 		PUBLIC
-			$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-			$<INSTALL_INTERFACE:${casc.c_install_incdir}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
 	)
 	install(
 		TARGETS casc.c-shared
